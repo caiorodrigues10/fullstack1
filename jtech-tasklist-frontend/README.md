@@ -1,45 +1,76 @@
-# jtech-tasklist
+# JTech Tasklist (Frontend)
 
-This template should help get you started developing with Vue 3 in Vite.
+Aplicação Vue 3 (Vite + TypeScript + Pinia) que consome a API REST de gerenciamento de tarefas.
 
-## Recommended IDE Setup
+## Stack
+- Vue 3 + Vite + TypeScript
+- Pinia (estado)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Configuração da API
+- Base URL padrão: `http://localhost:8080`
+- Opcional: defina `VITE_API_BASE_URL` para apontar para outro backend.
+  - Exemplo (Windows PowerShell):
+    ```ps1
+    setx VITE_API_BASE_URL "http://localhost:8080"
+    ```
+  - Em Bash (Git Bash):
+    ```bash
+    export VITE_API_BASE_URL="http://localhost:8080"
+    ```
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
+## Como rodar (somente tela de Tasks)
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
-
+## Build
 ```sh
 npm run build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
+## Testes unitários
 ```sh
 npm run test:unit
 ```
 
-### Lint with [ESLint](https://eslint.org/)
-
+## Lint
 ```sh
 npm run lint
 ```
+
+## Docker
+
+Build e run (porta 8080 -> 80 no container):
+```sh
+docker build -t jtech-tasklist-frontend .
+docker run --rm -p 8080:80 jtech-tasklist-frontend
+```
+
+Definir a API em build-time (Vite lê env no build):
+```sh
+docker build --build-arg VITE_API_BASE_URL=http://host.docker.internal:8080 -t jtech-tasklist-frontend .
+docker run --rm -p 8080:80 jtech-tasklist-frontend
+```
+
+Observações:
+- Em Windows/Mac, `host.docker.internal` aponta para a máquina host (back-end local).
+- Em Linux, use o IP da máquina host ou rede Docker apropriada.
+
+## Rotas do Backend (referência para a tela)
+Base URL: `http://localhost:8080`
+
+- POST `/tasks` — Criar tarefa
+  Body JSON:
+  ```json
+  { "title": "Minha Tarefa", "description": "Descrição", "status": "pendente" }
+  ```
+- GET `/tasks` — Listar todas as tarefas
+- GET `/tasks/{id}` — Buscar tarefa por ID
+- PUT `/tasks/{id}` — Atualizar tarefa
+- DELETE `/tasks/{id}` — Deletar tarefa
+- POST `/api/v1/tasklists` — Criar tasklist
+
+Documentação:
+- GET `/doc/tasklist/v1/api.html` — Swagger UI
+- GET `/doc/tasklist/v3/api-documents` — OpenAPI JSON
