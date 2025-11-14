@@ -1,0 +1,9 @@
+# .dockerignore para build local (Dockerfile.app.simple)
+# Exclui tudo exceto o JAR
+*
+!build
+build/**
+!build/libs
+build/libs/**
+!build/libs/*.jar
+

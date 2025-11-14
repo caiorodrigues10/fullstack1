@@ -21,7 +21,7 @@ services:
   api:
     build:
       context: ..
-      dockerfile: Dockerfile.app
+      dockerfile: Dockerfile.app.simple
     container_name: jtech-tasklist-api
     ports:
       - "8080:8080"
@@ -50,3 +50,4 @@ networks:
 
 volumes:
   postgres_data:
+
