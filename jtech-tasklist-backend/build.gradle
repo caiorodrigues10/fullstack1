@@ -18,6 +18,13 @@ java {
 	}
 }
 
+// Configura encoding para evitar problemas com caracteres especiais
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+	options.compilerArgs += ['-parameters']
+	options.annotationProcessorPath = configurations.annotationProcessor
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -25,8 +32,9 @@ configurations {
 }
 
 repositories {
-	maven { url "https://nexus.jtech.com.br/repository/maven-public" }
 	mavenCentral()
+	// Repositório da JTech (requer autenticação - comentado para desenvolvimento local)
+	// maven { url "https://nexus.jtech.com.br/repository/maven-public" }
 }
 
 dependencies {
@@ -52,6 +60,21 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// Corrige problema com caminhos com caracteres especiais (ex: "Área de Trabalho")
+// OneDrive pode causar problemas com rastreamento de arquivos
+tasks.named('processResources', ProcessResources) {
+	doNotTrackState("Caminho contém caracteres especiais e OneDrive pode causar problemas")
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	// Força processamento mesmo com problemas de snapshot
+	outputs.upToDateWhen { false }
+}
+
+// Corrige problema de snapshot com OneDrive na compilação Java
+tasks.named('compileJava', JavaCompile) {
+	// Desabilita build incremental para evitar problemas com OneDrive
+	options.incremental = false
 }
 
 publishing {
