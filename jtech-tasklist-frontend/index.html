@@ -4,7 +4,19 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
+    <meta name="color-scheme" content="light dark">
+    <title>JTech - Tarefas</title>
+    <style>
+      /* Critical CSS to avoid white flash before app styles load */
+      :root { color-scheme: light dark; }
+      html, body { height: 100%; }
+      @media (prefers-color-scheme: dark) {
+        html, body { background: #181818; color: #ffffff; }
+      }
+      @media (prefers-color-scheme: light) {
+        html, body { background: #ffffff; color: #2c3e50; }
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
