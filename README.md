@@ -108,15 +108,67 @@ npm run test:unit
 
 ## Estrutura de Pastas
 
+### Backend (`jtech-tasklist-backend`)
+
 ```
-.
-├── jtech-tasklist-backend/       # API Java (Spring Boot)
-│   └── README.md                 # Documentação detalhada do backend
-└── jtech-tasklist-frontend/      # Frontend Vue 3 + Vite + TypeScript
-    └── README.md                 # Documentação detalhada do frontend
+src/main/java/br/com/jtech/tasklist/
+├── adapters/
+│   ├── input/
+│   │   ├── controllers/           # Controllers REST (TaskController, CreateTasklistController)
+│   │   └── protocols/             # DTOs (TaskRequest/Response, TasklistRequest/Response)
+│   └── output/
+│       ├── repositories/          # JPA repositories + entities (Task, Tasklist)
+│       └── *.java                 # Adapters de saída (TaskAdapter, CreateTasklistAdapter)
+├── application/
+│   ├── core/
+│   │   ├── domains/               # Entidades de domínio (Task, Tasklist)
+│   │   └── usecases/              # Casos de uso (TaskUseCase, CreateTasklistUseCase)
+│   └── ports/
+│       ├── input/                 # Portas de entrada (contratos de use cases)
+│       └── output/                # Portas de saída (contratos de gateways)
+├── config/
+│   ├── infra/
+│   │   ├── exceptions/            # Modelos/estruturas de erro e validação
+│   │   ├── listeners/             # Eventos (ReadyEventListener)
+│   │   ├── swagger/               # Configuração OpenAPI/Swagger
+│   │   └── utils/                 # Utilitários (GlobalExceptionHandler, Jsons, GenId)
+│   └── usecases/                  # Configuração dos casos de uso (beans)
+└── StartTasklist.java             # Classe principal (Spring Boot)
 ```
 
-As estruturas internas (camadas, módulos, scripts) estão descritas em cada `README.md` específico.
+Principais “páginas” (endpoints) expostas pelos controllers:
+- `POST /tasks`, `GET /tasks`, `GET /tasks/{id}`, `PUT /tasks/{id}`, `DELETE /tasks/{id}`
+- Documentação: `GET /doc/tasklist/v1/api.html` (Swagger UI)
+
+Detalhes adicionais no `jtech-tasklist-backend/README.md`.
+
+### Frontend (`jtech-tasklist-frontend`)
+
+```
+src/
+├── App.vue                        # Shell da aplicação
+├── main.ts                        # Bootstrap (Vite + Vue)
+├── views/
+│   └── TasksView.vue              # Página principal de tarefas
+├── components/                    # Componentes de UI de apoio
+│   ├── icons/                     # Ícones (SVG em componentes Vue)
+│   └── ...                        # Demais componentes utilitários
+├── stores/
+│   └── tasks.ts                   # Store Pinia para gerenciar tarefas
+├── services/
+│   ├── http.ts                    # Cliente HTTP (fetch/axios wrapper)
+│   └── tasks.ts                   # Serviço de integração com a API de tarefas
+├── types/
+│   └── task.ts                    # Tipos/Interfaces de domínio do frontend
+├── composables/
+│   └── useToast.ts                # Composable de toasts/notificações
+└── assets/                        # Estilos e assets estáticos
+```
+
+Principais páginas/fluxos:
+- `TasksView.vue`: lista, cria, atualiza e remove tarefas via API (`/tasks`).
+
+Detalhes adicionais no `jtech-tasklist-frontend/README.md`.
 
 ---
 
@@ -133,78 +185,5 @@ Para racional completo e detalhes de implementação, consulte os `README.md` de
 
 ---
 
-## Melhorias Futuras
-
-- Unificar execução local com um `docker-compose` de topo (frontend + backend + DB).
-- Adicionar testes end-to-end (Cypress/Playwright) cobrindo o fluxo de tarefas.
-- Pipeline de CI/CD (build, testes, verificação de qualidade e publicação de artefatos).
-- Observabilidade: métricas/dashboards (Prometheus/Grafana) e logs estruturados.
-- Segurança: autenticação/autorização (JWT) e rate limiting na API.
-- Versionamento de API e contratos tipados (OpenAPI → client types para o frontend).
-- Migrações de banco (Flyway) e dados seed para revisão mais rápida.
-
----
-
 Em caso de dúvidas, verifique primeiro os `README.md` dentro de `jtech-tasklist-backend` e `jtech-tasklist-frontend`, onde há instruções detalhadas e específicas de cada projeto.
-# Desafio Técnico Fullstack 1 - JTech
 
-## API RESTful para Gerenciamento de Tarefas
-
-### Contextualização e Objetivo
-
-A **JTech** busca identificar profissionais que demonstrem sólido conhecimento nos fundamentos do desenvolvimento backend. Este desafio técnico foi elaborado para avaliar suas competências na construção de APIs RESTful utilizando Java e Spring Boot.
-
-**Objetivo:** Desenvolver uma API completa para gerenciamento de tarefas (TODO List), aplicando boas práticas de desenvolvimento, arquitetura limpa e documentação técnica de qualidade.
-
-## Especificações Técnicas
-
-### Requisitos Funcionais
-
-1. **Criar Tarefa**: Endpoint `POST /tasks` para adicionar uma nova tarefa. A tarefa deve conter título, descrição e status (ex: "pendente", "concluída").
-2. **Listar Tarefas**: Endpoint `GET /tasks` para retornar todas as tarefas cadastradas.
-3. **Buscar Tarefa por ID**: Endpoint `GET /tasks/{id}` para obter os detalhes de uma tarefa específica.
-4. **Atualizar Tarefa**: Endpoint `PUT /tasks/{id}` para atualizar o título, a descrição ou o status de uma tarefa.
-5. **Deletar Tarefa**: Endpoint `DELETE /tasks/{id}` para remover uma tarefa do sistema.
-
-### Requisitos Não Funcionais
-
-1. **Persistência de Dados**: As tarefas devem ser armazenadas em banco de dados. Recomenda-se H2 (em memória) para simplificação ou PostgreSQL para demonstrar conhecimento em bancos relacionais.
-2. **Validação de Dados**: Implementar validação robusta das entradas do usuário (ex: título da tarefa obrigatório e não vazio).
-3. **Tratamento de Erros**: A API deve retornar códigos de status HTTP apropriados e mensagens de erro claras (ex: 404 para tarefa não encontrada, 400 para dados inválidos).
-
-### Stack Tecnológica Obrigatória
-
-* **Linguagem**: Java
-* **Framework**: Spring Boot
-* **Persistência**: Spring Data JPA com Hibernate
-* **Banco de Dados**: H2 (em memória) ou PostgreSQL
-* **Testes**: Testes unitários com JUnit/Mockito.
-
-## Critérios de Avaliação
-
-* **Qualidade e Organização do Código**: Código limpo, legível e seguindo as convenções do Java.
-* **Aplicação de Boas Práticas**: Utilização de princípios como Clean Code e KISS.
-* **Funcionalidade**: Todos os endpoints devem funcionar conforme especificado.
-* **Testes Automatizados**: Cobertura de testes unitários para as classes de serviço e controllers.
-* **Uso Adequado da Stack**: Configuração correta do Spring Boot, JPA e do banco de dados.
-* **Modelagem de Dados**: Estrutura da entidade `Task` bem definida.
-* **Controle de Versão**: Commits claros e lógicos no Git.
-
-## Expectativa de Entrega
-
-* **Prazo**: Até 3 dias corridos a partir do recebimento.
-* **Formato**: Entregar o código-fonte em um repositório Git, acompanhado de um `README.md` completo.
-
-### Estrutura Obrigatória do `README.md`
-
-1. **Visão Geral do Projeto**: Breve descrição da API e seus objetivos.
-2. **Stack Utilizada**: Lista das tecnologias implementadas.
-3. **Como Rodar Localmente**: Instruções para configurar o ambiente, instalar dependências e iniciar o servidor.
-4. **Como Rodar os Testes**: Comando para executar os testes.
-5. **Estrutura de Pastas**: Explicação da organização do projeto.
-6. **Decisões Técnicas**: Justificativas para as escolhas feitas (ex: por que usou H2 em vez de PostgreSQL).
-7. **Melhorias Futuras**: Sugestões para evoluir a API.
-
----
-
-**Boa sorte! A JTech está ansiosa para conhecer sua solução.**
